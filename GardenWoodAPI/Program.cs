@@ -1,5 +1,6 @@
 
 using GardenWoodAPI.Model;
+using GardenWoodAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace GardenWoodAPI
@@ -29,6 +30,7 @@ namespace GardenWoodAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddSingleton<FirebaseStorage>();
 
             var app = builder.Build();
 

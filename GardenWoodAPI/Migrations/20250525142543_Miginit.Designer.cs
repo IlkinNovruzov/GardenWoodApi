@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GardenWoodAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250510080109_init")]
-    partial class init
+    [Migration("20250525142543_Miginit")]
+    partial class Miginit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,9 +52,6 @@ namespace GardenWoodAPI.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CatgeoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -72,6 +69,28 @@ namespace GardenWoodAPI.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("GardenWoodAPI.Model.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
+                });
+
             modelBuilder.Entity("GardenWoodAPI.Model.Product", b =>
                 {
                     b.HasOne("GardenWoodAPI.Model.Category", "Category")
@@ -83,9 +102,25 @@ namespace GardenWoodAPI.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("GardenWoodAPI.Model.ProductImage", b =>
+                {
+                    b.HasOne("GardenWoodAPI.Model.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("GardenWoodAPI.Model.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("GardenWoodAPI.Model.Product", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }
