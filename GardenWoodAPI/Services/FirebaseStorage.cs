@@ -45,37 +45,34 @@ namespace GardenWoodAPI.Services
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Dosya yükleme hatası: {ex.Message}");
+                Console.Error.WriteLine($"File upload error: {ex.Message}");
                 throw;
             }
 
             var url = $"https://firebasestorage.googleapis.com/v0/b/{_bucketName}/o/{Uri.EscapeDataString(objectName)}?alt=media&token={downloadToken}";
             return url;
         }
+        public async Task DeleteFileAsync(string fileUrl)
+        {
+            if (string.IsNullOrEmpty(fileUrl)) throw new ArgumentException("File URL cannot be null or empty.");
 
-        //public async Task<string> UploadFileAsync(IFormFile file)
-        //{
-        //    if (file == null || !FileExtensions.IsImage(file))
-        //    {
-        //        throw new ArgumentException("File cannot be null or empty.", nameof(file));
-        //    }
+            try
+            {
+                var uri = new Uri(fileUrl);
+                var segments = System.Web.HttpUtility.ParseQueryString(uri.Query);
+                var path = uri.AbsolutePath; // /v0/b/<bucket-name>/o/<encoded-file-name>
+                var objectNameEncoded = path.Split("/o/")[1]; // <encoded-file-name>
+                var objectName = Uri.UnescapeDataString(objectNameEncoded);
 
-        //    var objectName = Path.GetRandomFileName();
-        //    var contentType = file.ContentType;
-        //    try
-        //    {
-        //        using var stream = file.OpenReadStream();
-        //        await _storageClient.UploadObjectAsync(_bucketName, objectName, contentType, stream);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Hatanın detaylarını loglama veya yazdırma
-        //        Console.Error.WriteLine($"Dosya yükleme hatası: {ex.Message}");
-        //        throw;
-        //    }
-        //    var url = $"https://firebasestorage.googleapis.com/v0/b/{_bucketName}/o/{objectName}?alt=media";
-        //    //  var uxrl = $"https://storage.googleapis.com/{_bucketName}/{objectName}";
-        //    return url;
-        //}
+                await _storageClient.DeleteObjectAsync(_bucketName, objectName);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"File delete error: {ex.Message}");
+                throw;
+            }
+        }
+
+
     }
 }
