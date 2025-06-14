@@ -13,10 +13,18 @@ namespace GardenWoodAPI.Controllers.Admin
         private readonly IConfiguration _config = config;
         private bool IsAuthorized(string apiKey) => apiKey == _config["AdminApiKey"];
 
+        //[HttpGet("list")]
+        //public async Task<IActionResult> GetAll([FromHeader(Name = "X-API-KEY")] string apiKey)
+        //{
+        //    if (!IsAuthorized(apiKey)) return Unauthorized("Invalid API key");
+        //    var categories = await _context.Categories
+        //        .Select(c => new { c.Id, c.Name })
+        //        .ToListAsync();
+        //    return Ok(categories);
+        //}
         [HttpGet("list")]
-        public async Task<IActionResult> GetAll([FromHeader(Name = "X-API-KEY")] string apiKey)
+        public async Task<IActionResult> GetAll()
         {
-            if (!IsAuthorized(apiKey)) return Unauthorized("Invalid API key");
             var categories = await _context.Categories
                 .Select(c => new { c.Id, c.Name })
                 .ToListAsync();
